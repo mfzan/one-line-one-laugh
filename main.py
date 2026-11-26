@@ -53,6 +53,14 @@ def main():
     # itself (the grader owns /output, and chmod on it would fail).
     os.chmod(path, 0o644)
 
+    # Read the file back and confirm exactly the validated line landed:
+    # a write that silently changed bytes would otherwise ship an
+    # entry nobody checked.
+    with open(path, "r", encoding="utf-8", newline="") as handle:
+        written = handle.read()
+    if written != line:
+        raise SystemExit("written entry does not match the validated line")
+
 
 if __name__ == "__main__":
     main()
